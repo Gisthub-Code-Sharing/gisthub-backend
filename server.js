@@ -159,8 +159,7 @@ router
 
     app.use(router.routes()).use(router.allowedMethods());
 
-    app.listen(1337);
-    console.log('app listen on port: 1337');
-    // app.listen(process.env.PORT || 1338, () => {
-    //     console.log('Application is starting on port 1338')
-    // })
+
+    app.listen(process.env.PORT || 1338, () => {
+        console.log('Application is starting on port 1338')
+    })
