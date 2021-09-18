@@ -32,9 +32,9 @@ passport.use(
             usernameField: 'username',
             passwordField: 'password',
         },
-        async (username, password, done) => {
+        async (userName, password, done) => {
             let user = null;
-            user = await User.findOne({username});
+            user = await User.findOne({userName});
             if(!user){
                 done({type: 'email', message: 'No such user found'}, false);
                 return;
@@ -55,10 +55,10 @@ passport.use('local.signup',
             passwordField: 'password',
             passReqToCallback: true,
         },
-        async (req, username, password, done) => {
+        async (req, userName, password, done) => {
 
             let user = null;
-            user = await User.findOne({username});
+            user = await User.findOne({userName});
             if(user){
                 done({type: 'email', message:'Email already exists'}, false);
                 return;
@@ -68,17 +68,19 @@ passport.use('local.signup',
             const salt = await bcrypt.genSalt(10);
             const encryptedPassword = await bcrypt.hash(password, salt);
 
+            console.log(firstName)
+
             user = new User({
                 email,
                 password: encryptedPassword,
-                username,
+                userName,
                 firstName,
                 lastName
             })
 
             await user.save();
 
-            done(null, {id: user.id, email: user.email, firstName, username, lastName});
+            done(null, {id: user.id, email: user.email, firstName: user.firstName, username: user.username, lastName: user.lastName});
 
         }));
 
