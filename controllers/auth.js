@@ -29,12 +29,12 @@ passport.deserializeUser(async (id, done) => {
 
 passport.use(
     new LocalStrategy({
-            usernameField: 'email',
+            usernameField: 'username',
             passwordField: 'password',
         },
-        async (email, password, done) => {
+        async (username, password, done) => {
             let user = null;
-            user = await User.findOne({email});
+            user = await User.findOne({username});
             if(!user){
                 done({type: 'email', message: 'No such user found'}, false);
                 return;
@@ -42,7 +42,7 @@ passport.use(
             console.log("LOGGING IN")
             if(bcrypt.compareSync(password, user.password)){
                 console.log("LOGGED IN")
-                done(null, {id: user.id, email: user.email})
+                done(null, {id: user.id, email: user.email, username: user.username, firstName: user.firstName, lastName: user.lastName})
                 // done(null, {id: user.id, confusedFace: user.confusedFace});
             } else{
                 done({type: 'password', message: 'Password or Email is incorrect'}, false)
@@ -51,19 +51,19 @@ passport.use(
 
 passport.use('local.signup',
     new LocalStrategy({
-            usernameField: 'email',
+            usernameField: 'username',
             passwordField: 'password',
             passReqToCallback: true,
         },
-        async (req, email, password, done) => {
+        async (req, username, password, done) => {
 
             let user = null;
-            user = await User.findOne({email});
+            user = await User.findOne({username});
             if(user){
                 done({type: 'email', message:'Email already exists'}, false);
                 return;
             }
-            const {firstName, lastName, type, images} = req.body;
+            const {firstName, lastName, email} = req.body;
 
             const salt = await bcrypt.genSalt(10);
             const encryptedPassword = await bcrypt.hash(password, salt);
@@ -71,12 +71,14 @@ passport.use('local.signup',
             user = new User({
                 email,
                 password: encryptedPassword,
+                username,
+                firstName,
+                lastName
             })
 
             await user.save();
 
-
-            done(null, {id: user.id, email: user.email});
+            done(null, {id: user.id, email: user.email, firstName, username, lastName});
 
         }));
 
