@@ -153,9 +153,11 @@ router
                         gist
                     }
                     return
-                } 
-            ctx.throw(401, "You are not authenticated");
+                } else {
+                    ctx.throw(403, "You do not have permission to view this");
+                }
         }
+        ctx.throw(401, "You are not authenticated");
     }})
     .post('/getAllUsers', async ctx => {
         const users = await User.find({});
