@@ -92,7 +92,7 @@ router
     .post('/myGists', async ctx => {
         const {user} = ctx.request.body
         if(user) {
-            const gists = await User.findOneById(user.id).populate('gists');
+            const gists = await User.findById(user.id).populate('gists');
             ctx.body = {
                 gists
             }
@@ -120,7 +120,7 @@ router
         if(user) {
             const {gistId} = ctx.request.body;
 
-            const gist = Gist.findOneById(gistId)
+            const gist = Gist.findById(gistId)
             if(gist.owner !== user._id){
                 ctx.throw(403, "You do not own this gist")
             }
