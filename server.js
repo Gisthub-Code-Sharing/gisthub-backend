@@ -150,6 +150,7 @@ router
         } else {
             if(user) {
                 if (user.id === gist.owner._id || user.userName in gist.permissions){
+                    console.log("PERMISSION GRANTED")
                     ctx.body = {
                         gist
                     }
