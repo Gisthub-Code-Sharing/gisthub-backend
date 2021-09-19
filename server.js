@@ -104,7 +104,7 @@ router
     .post('/createGist', async ctx => {
         const {user} = ctx.request.body
         if(user) {
-            const newGist = new Gist({owner: user.id}); //TODO: Once model is finished
+            let newGist = new Gist({owner: user.id}); //TODO: Once model is finished
             await newGist.save();
             ctx.body = {
                 message: "Created successfully",
