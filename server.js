@@ -149,8 +149,8 @@ router
             return
         } else {
             if(user) {
-                console.log(user.id, " :: ", gist.owner._id, " ::  ", user.userName, ' :: ', gist.permissions);
-                if (user.id === gist.owner._id || user.userName in gist.permissions){
+                console.log(user.id, " :: ", gist.owner._id.toString(), " ::  ", user.userName, ' :: ', gist.permissions);
+                if (user.id === gist.owner._id.toString() || user.userName in gist.permissions){
                     console.log("PERMISSION GRANTED")
                     ctx.body = {
                         gist
