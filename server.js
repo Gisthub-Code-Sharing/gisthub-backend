@@ -88,10 +88,9 @@ router
             return ctx.login(user);
         }
     })(ctx))
-    .get('/myGists', async ctx => {
-        console.log("AM AUTHENTICATED :: " + ctx.isAuthenticated().toString())
-        if(ctx.isAuthenticated()) {
-            const {user} = ctx.req;
+    .post('/myGists', async ctx => {
+        const {user} = ctx.request.body
+        if(user) {
             const gists = await User.findOneById(user.id).populate('gists');
             ctx.body = {
                 gists
@@ -102,10 +101,8 @@ router
         }
     })
     .post('/createGist', async ctx => {
-        console.log("IN CREATE", ctx.req.user)
-        console.log(ctx.req.user)
-        if(ctx.isAuthenticated()) {
-            const {user} = ctx.req;
+        const {user} = ctx.request.body
+        if(user) {
             const newGist = Gist({owner: user.id}); //TODO: Once model is finished
             await newGist.save();
             ctx.body = {
@@ -118,10 +115,8 @@ router
         }
     })
     .post('/updateGist', async ctx => {
-        console.log("IN UPDATE", ctx.req)
-        console.log(ctx.req)
-        if(ctx.isAuthenticated()) {
-            const {user} = ctx.req;
+        const {user} = ctx.request.body
+        if(user) {
             const {gistId} = ctx.request.body;
 
             const gist = Gist.findOneById(gistId)
@@ -138,9 +133,8 @@ router
             ctx.throw(401, "You are not logged in")
         }
     })
-    .get('/viewGist', async ctx => {
-        const {gistId} = ctx.request.body;
-        const {user} = ctx.req;
+    .post('/viewGist', async ctx => {
+        const {gistId, user} = ctx.request.body;
         const gist = await Gist.findOneById(gistId)
         if (!gist) {
             ctx.throw(404, "Gist not found")
@@ -150,7 +144,7 @@ router
                 gist
             }
         } else {
-            if(ctx.isAuthenticated()) {
+            if(user) {
                 if (user._id === gist.owner._id || user._id in gist.permissions){
                     ctx.body = {
                         gist
