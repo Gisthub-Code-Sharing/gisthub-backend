@@ -106,7 +106,7 @@ router
         if(user) {
             let newGist = new Gist({owner: user.id}); //TODO: Once model is finished
             await newGist.save();
-            User.findByIdAndUpdate(user.id, {$push: {gists: newGist.id}})
+            await User.findByIdAndUpdate(user.id, {$push: {gists: newGist.id}});
             ctx.body = {
                 message: "Created successfully",
                 id: newGist._id,
