@@ -6,9 +6,9 @@ var gistSchema = new Schema({
     owner: {type: Schema.Types.ObjectId, ref: 'User'},
     title: String, 
     description: String,
-    permissions: [{type: Schema.Types.ObjectId, ref: 'User'}],
+    permissions: [{type: String}],
     content: [ new Schema({type: String, payload: String})],
-    isPrivate: Boolean,
+    isPrivate: {type: Boolean, default: true},
 });
 
 var Gist = mongoose.model('Gist', gistSchema);
