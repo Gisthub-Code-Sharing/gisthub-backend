@@ -10,10 +10,10 @@ const mount = require('koa-mount');
 const serve = require('koa-static');
 const _ = require('lodash');
 
-mongo.connect("mongodb+srv://admin:0zKQA8TYBKGYR6KE@gisthub.whalg.mongodb.net/gisthub?retryWrites=true&w=majority", {useNewUrlParser: true, useUnifiedTopology: true });
+mongo.connect("mongodb+srv://admin:0zKQA8TYBKGYR6KE@gisthub.whalg.mongodb.net/gisthub?retryWrites=true&w=majority", { useNewUrlParser: true, useUnifiedTopology: true });
 
-const {User} = require('./models/Users');
-const {Gist} = require('./models/Gists');
+const { User } = require('./models/Users');
+const { Gist } = require('./models/Gists');
 const app = new Koa();
 
 app.proxy = true
@@ -40,9 +40,9 @@ app.use(session(CONFIG, app));
 app.use(koaLogger());
 
 app.use(async (ctx, next) => {
-    try{
+    try {
         await next();
-    } catch(error){
+    } catch (error) {
         ctx.status = error.status || 500;
         ctx.type = 'json';
         ctx.body = {
@@ -74,7 +74,7 @@ router
         ctx.body = "HI";
     })
     .post('/login', ctx => passport.authenticate('local', (err, user) => {
-        if(!user){
+        if (!user) {
             ctx.throw(401, err);
         } else {
             ctx.body = user;
@@ -82,7 +82,7 @@ router
         }
     })(ctx))
     .post('/register', ctx => passport.authenticate('local.signup', (err, user) => {
-        if(!user){
+        if (!user) {
             ctx.throw(401, err);
         } else {
             ctx.body = user;
@@ -90,23 +90,25 @@ router
         }
     })(ctx))
     .post('/myGists', async ctx => {
-        const {user} = ctx.request.body
-        if(user) {
+        const { user } = ctx.request.body
+        if (user) {
             const newUser = await User.findById(user.id).populate('gists');
+            const sharedWithMe = await Gist.find({ permissions: user.userName });
+            console.log(sharedWithMe);
             ctx.body = {
                 gists: newUser.gists,
             }
         }
-        else{
+        else {
             ctx.throw(401, "You are not authenticated");
         }
     })
     .post('/createGist', async ctx => {
-        const {user} = ctx.request.body
-        if(user) {
-            let newGist = new Gist({owner: user.id}); //TODO: Once model is finished
+        const { user } = ctx.request.body
+        if (user) {
+            let newGist = new Gist({ owner: user.id }); //TODO: Once model is finished
             await newGist.save();
-            await User.findByIdAndUpdate(user.id, {$push: {gists: newGist.id}});
+            await User.findByIdAndUpdate(user.id, { $push: { gists: newGist.id } });
             ctx.body = {
                 message: "Created successfully",
                 id: newGist._id,
@@ -117,16 +119,16 @@ router
         }
     })
     .post('/updateGist', async ctx => {
-        const {user} = ctx.request.body
-        if(user) {
-            const {gistId} = ctx.request.body;
+        const { user } = ctx.request.body
+        if (user) {
+            const { gistId } = ctx.request.body;
 
             const gist = Gist.findById(gistId)
-            if(gist.owner !== user._id){
+            if (gist.owner !== user._id) {
                 ctx.throw(403, "You do not own this gist")
             }
             delete ctx.request.body['gistId'];
-            await Gist.updateOne({_id: gistId}, {$set: ctx.request.body});
+            await Gist.updateOne({ _id: gistId }, { $set: ctx.request.body });
 
             ctx.body = {
                 message: "Successfully updated"
@@ -137,19 +139,19 @@ router
         }
     })
     .post('/viewGist', async ctx => {
-        const {gistId, user} = ctx.request.body;
+        const { gistId, user } = ctx.request.body;
         const gist = await Gist.findById(gistId)
         if (!gist) {
             ctx.throw(404, "Gist not found")
         }
-        if(!gist.isPrivate) {
+        if (!gist.isPrivate) {
             ctx.body = {
                 gist
             }
             return
         } else {
-            if(user) {
-                    if (user.id === gist.owner._id.toString() || gist.permissions.includes(user.userName)){
+            if (user) {
+                if (user.id === gist.owner._id.toString() || gist.permissions.includes(user.userName)) {
                     ctx.body = {
                         gist
                     }
@@ -157,17 +159,18 @@ router
                 } else {
                     ctx.throw(403, "You do not have permission to view this");
                 }
+            }
+            ctx.throw(401, "You are not authenticated");
         }
-        ctx.throw(401, "You are not authenticated");
-    }})
+    })
     .post('/getAllUsers', async ctx => {
         const users = await User.find({});
-        ctx.body = { users: users.map(usr => ({firstName: usr.firstName, lastName: usr.lastName, email: usr.email, userName: usr.userName}))}
+        ctx.body = { users: users.map(usr => ({ firstName: usr.firstName, lastName: usr.lastName, email: usr.email, userName: usr.userName })) }
     })
 
-    app.use(router.routes()).use(router.allowedMethods());
+app.use(router.routes()).use(router.allowedMethods());
 
 
-    app.listen(process.env.PORT || 1338, () => {
-        console.log('Application is starting on port 1338')
-    })
+app.listen(process.env.PORT || 1338, () => {
+    console.log('Application is starting on port 1338')
+})
