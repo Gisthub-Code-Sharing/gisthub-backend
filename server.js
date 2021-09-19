@@ -102,6 +102,8 @@ router
         }
     })
     .post('/createGist', async ctx => {
+        console.log("IN CREATE", ctx.req)
+        console.log(ctx.req)
         if(ctx.isAuthenticated()) {
             const {user} = ctx.req;
             const newGist = Gist({owner: user.id}); //TODO: Once model is finished
@@ -116,7 +118,7 @@ router
         }
     })
     .post('/updateGist', async ctx => {
-        console.log("IN UPDATE")
+        console.log("IN UPDATE", ctx.req)
         console.log(ctx.req)
         if(ctx.isAuthenticated()) {
             const {user} = ctx.req;
