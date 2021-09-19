@@ -149,7 +149,7 @@ router
             return
         } else {
             if(user) {
-                    if (user.id === gist.owner._id.toString() || user.userName in gist.permissions){
+                    if (user.id === gist.owner._id.toString() || gist.permissions.includes(user.userName)){
                     ctx.body = {
                         gist
                     }
