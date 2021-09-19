@@ -13,6 +13,7 @@ const _ = require('lodash');
 mongo.connect("mongodb+srv://admin:0zKQA8TYBKGYR6KE@gisthub.whalg.mongodb.net/gisthub?retryWrites=true&w=majority", {useNewUrlParser: true, useUnifiedTopology: true });
 
 const User = require('./models/Users');
+const Gist = require('./models/Gist');
 const app = new Koa();
 
 app.proxy = true
@@ -103,7 +104,7 @@ router
     .post('/createGist', async ctx => {
         const {user} = ctx.request.body
         if(user) {
-            const newGist = Gist({owner: user.id}); //TODO: Once model is finished
+            const newGist = new Gist({owner: user.id}); //TODO: Once model is finished
             await newGist.save();
             ctx.body = {
                 message: "Created successfully",
