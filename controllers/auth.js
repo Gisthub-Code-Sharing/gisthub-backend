@@ -42,7 +42,7 @@ passport.use(
             console.log("LOGGING IN", user.id)
             if(bcrypt.compareSync(password, user.password)){
                 console.log("LOGGED IN")
-                done(null, {id: user.id, email: user.email, username: user.username, firstName: user.firstName, lastName: user.lastName})
+                done(null, {id: user.id, email: user.email, userName: user.userName, firstName: user.firstName, lastName: user.lastName})
                 // done(null, {id: user.id, confusedFace: user.confusedFace});
             } else{
                 done({type: 'password', message: 'Password or Email is incorrect'}, false)
@@ -80,7 +80,7 @@ passport.use('local.signup',
 
             await user.save();
 
-            done(null, {id: user.id, email: user.email, firstName: user.firstName, username: user.username, lastName: user.lastName});
+            done(null, {id: user.id, email: user.email, firstName: user.firstName, userName: user.userName, lastName: user.lastName});
 
         }));
 
