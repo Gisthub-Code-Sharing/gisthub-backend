@@ -94,9 +94,10 @@ router
         if (user) {
             const newUser = await User.findById(user.id).populate('gists');
             const sharedWithMe = await Gist.find({ permissions: user.userName });
-            console.log(sharedWithMe);
+
             ctx.body = {
                 gists: newUser.gists,
+                sharedWithMe: sharedWithMe,
             }
         }
         else {
