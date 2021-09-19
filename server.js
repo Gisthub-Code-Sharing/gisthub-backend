@@ -116,6 +116,8 @@ router
         }
     })
     .post('/updateGist', async ctx => {
+        console.log("IN UPDATE")
+        console.log(ctx.req)
         if(ctx.isAuthenticated()) {
             const {user} = ctx.req;
             const {gistId} = ctx.request.body;

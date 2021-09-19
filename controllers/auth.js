@@ -7,7 +7,7 @@ const {mongoose} = require('mongoose');
 const fs = require('fs');
 
 passport.serializeUser((user, done) => {
-    console.log("SERIALIZING USER")
+    console.log("SERIALIZING USER", user.id)
     done(null, user.id);
 });
 
@@ -39,7 +39,7 @@ passport.use(
                 done({type: 'email', message: 'No such user found'}, false);
                 return;
             }
-            console.log("LOGGING IN")
+            console.log("LOGGING IN", user.id)
             if(bcrypt.compareSync(password, user.password)){
                 console.log("LOGGED IN")
                 done(null, {id: user.id, email: user.email, username: user.username, firstName: user.firstName, lastName: user.lastName})
