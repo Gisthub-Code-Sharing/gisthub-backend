@@ -157,6 +157,10 @@ router
             ctx.throw(401, "You are not authenticated");
         }
     }})
+    .post('/getAllUsers', async ctx => {
+        const users = await User.find({});
+        ctx.body = { users: users.map(usr => ({firstName: usr.firstName, lastName: usr.lastName, email: usr.email, userName: usr.userName}))}
+    })
 
     app.use(router.routes()).use(router.allowedMethods());
 
