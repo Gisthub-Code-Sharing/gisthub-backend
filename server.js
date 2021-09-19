@@ -149,7 +149,7 @@ router
             return
         } else {
             if(user) {
-                if (user._id === gist.owner._id || user.userName in gist.permissions){
+                if (user.id === gist.owner._id || user.userName in gist.permissions){
                     ctx.body = {
                         gist
                     }
