@@ -144,18 +144,18 @@ router
             ctx.body = {
                 gist
             }
+            return
         } else {
             if(user) {
                 if (user._id === gist.owner._id || user._id in gist.permissions){
                     ctx.body = {
                         gist
                     }
+                    return
                 } 
-            } else {
-                ctx.throw(401, "You are not authenticated")
-            }
+            ctx.throw(401, "You are not authenticated");
         }
-    })
+    }})
 
     app.use(router.routes()).use(router.allowedMethods());
 
