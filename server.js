@@ -125,6 +125,7 @@ router
             if(gist.owner !== user._id){
                 ctx.throw(403, "You do not own this gist")
             }
+            delete ctx.request.body['gistId'];
             await Gist.updateOne({_id: gistId}, {$set: ctx.request.body});
 
             ctx.body = {
