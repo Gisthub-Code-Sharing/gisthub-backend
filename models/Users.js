@@ -8,7 +8,7 @@ var userSchema = new Schema({
     lastName: {type: String, required: true},
     email: {type: String, required: true},
     password: {type: String, required: true},
-    gists: {type: Schema.Types.ObjectId, ref: 'Gist'}
+    gists: [{type: Schema.Types.ObjectId, ref: 'Gist'}]
 });
 
 var User = mongoose.model('User', userSchema);
