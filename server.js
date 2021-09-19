@@ -136,7 +136,7 @@ router
     })
     .post('/viewGist', async ctx => {
         const {gistId, user} = ctx.request.body;
-        const gist = await Gist.findOneById(gistId)
+        const gist = await Gist.findById(gistId)
         if (!gist) {
             ctx.throw(404, "Gist not found")
         }
