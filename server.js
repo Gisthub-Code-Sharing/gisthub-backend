@@ -12,8 +12,8 @@ const _ = require('lodash');
 
 mongo.connect("mongodb+srv://admin:0zKQA8TYBKGYR6KE@gisthub.whalg.mongodb.net/gisthub?retryWrites=true&w=majority", {useNewUrlParser: true, useUnifiedTopology: true });
 
-const User = require('./models/Users');
-const Gist = require('./models/Gists');
+const {User} = require('./models/Users');
+const {Gist} = require('./models/Gists');
 const app = new Koa();
 
 app.proxy = true
