@@ -55,7 +55,7 @@ app.use(async (ctx, next) => {
 const corsOptions = {
     credentials: true,
 }
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(bodyParser());
 
 const passport = require('koa-passport');
@@ -89,6 +89,7 @@ router
         }
     })(ctx))
     .get('/myGists', async ctx => {
+        console.log("AM AUTHENTICATED :: " + ctx.isAuthenticated().toString())
         if(ctx.isAuthenticated()) {
             const {user} = ctx.req;
             const gists = await User.findOneById(user.id).populate('gists');
@@ -103,10 +104,11 @@ router
     .post('/createGist', async ctx => {
         if(ctx.isAuthenticated()) {
             const {user} = ctx.req;
-            const newGist = Gist({owner: user.id, ...ctx.request.body}); //TODO: Once model is finished
+            const newGist = Gist({owner: user.id}); //TODO: Once model is finished
             await newGist.save();
             ctx.body = {
-                message: "Created successfully"
+                message: "Created successfully",
+                id: newGist._id,
             }
         }
         else {
