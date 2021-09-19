@@ -92,9 +92,9 @@ router
     .post('/myGists', async ctx => {
         const {user} = ctx.request.body
         if(user) {
-            const gists = await User.findById(user.id).populate('gists');
+            const newUser = await User.findById(user.id).populate('gists');
             ctx.body = {
-                gists
+                gists: newUser.gists,
             }
         }
         else{
@@ -106,6 +106,7 @@ router
         if(user) {
             let newGist = new Gist({owner: user.id}); //TODO: Once model is finished
             await newGist.save();
+            User.findByIdAndUpdate(user.id, {$push: {gists: newGist.id}})
             ctx.body = {
                 message: "Created successfully",
                 id: newGist._id,
